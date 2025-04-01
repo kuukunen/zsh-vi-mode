@@ -1504,10 +1504,11 @@ function zvm_navigation_handler() {
       '$') cmd=(zle vi-end-of-line);;
       ' ') cmd=(zle vi-forward-char);;
       '0') cmd=(zle vi-digit-or-beginning-of-line);;
-      'h') cmd=(zle vi-backward-char);;
-      'j') cmd=(zle down-line-or-history);;
-      'k') cmd=(zle up-line-or-history);;
-      'l') cmd=(zle vi-forward-char);;
+      'j') cmd=(zle vi-backward-char);;
+      'k') cmd=(zle down-line-or-history);;
+      'l') cmd=(zle up-line-or-history);;
+      ';') cmd=(zle vi-forward-char);;
+      'ö') cmd=(zle vi-forward-char);;
       'w') cmd=(zle vi-forward-word);;
       'W') cmd=(zle vi-forward-blank-word);;
       'e') cmd=(zle vi-forward-word-end);;
@@ -3489,7 +3490,8 @@ function zvm_init() {
   zvm_bindkey vicmd  'O' zvm_open_line_above
   zvm_bindkey vicmd  'r' zvm_vi_replace_chars
   zvm_bindkey vicmd  'R' zvm_vi_replace
-  zvm_bindkey vicmd  's' zvm_vi_substitute
+  #zvm_bindkey vicmd  's' zvm_vi_substitute
+  zvm_bindkey vicmd  's' zce
   zvm_bindkey vicmd  'S' zvm_vi_substitute_whole_line
   zvm_bindkey vicmd  'C' zvm_vi_change_eol
   zvm_bindkey visual 'c' zvm_vi_change
