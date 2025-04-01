@@ -1040,6 +1040,9 @@ function zvm_yank() {
   if [[ ${1:-$ZVM_MODE} == $ZVM_MODE_VISUAL_LINE ]]; then
     CUTBUFFER=${CUTBUFFER}$'\n'
   fi
+  if [[ $WSL ]]; then
+    win32yank.exe -i <<< "$CUTBUFFER"
+  fi
   CURSOR=$bpos MARK=$epos
 }
 
@@ -1086,6 +1089,9 @@ function zvm_vi_yank() {
 # Put cutbuffer after the cursor
 function zvm_vi_put_after() {
   local head= foot=
+  if [[ $WSL ]]; then
+    CUTBUFFER="$(win32yank.exe -o)"
+  fi
   local content=${CUTBUFFER}
   local offset=1
 
@@ -1138,6 +1144,9 @@ function zvm_vi_put_after() {
 # Put cutbuffer before the cursor
 function zvm_vi_put_before() {
   local head= foot=
+  if [[ $WSL ]]; then
+    CUTBUFFER="$(win32yank.exe -o)"
+  fi
   local content=${CUTBUFFER}
 
   if [[ ${content: -1} == $'\n' ]]; then
@@ -1199,12 +1208,18 @@ function zvm_replace_selection() {
     CUTBUFFER=${CUTBUFFER}$'\n'
   fi
 
+  if [[ $WSL ]]; then
+    win32yank.exe -i <<< "$CUTBUFFER"
+  fi
   BUFFER="${BUFFER:0:$bpos}${cutbuf}${BUFFER:$epos}"
   CURSOR=$cpos
 }
 
 # Replace characters of the visual selection
 function zvm_vi_replace_selection() {
+  if [[ $WSL ]]; then
+    CUTBUFFER="$(win32yank.exe -o)"
+  fi
   zvm_replace_selection $CUTBUFFER
   zvm_exit_visual_mode ${1:-true}
 }
@@ -1225,6 +1240,10 @@ function zvm_vi_change() {
   # Check if it is visual line mode
   if [[ $ZVM_MODE == $ZVM_MODE_VISUAL_LINE ]]; then
     CUTBUFFER=${CUTBUFFER}$'\n'
+  fi
+
+  if [[ $WSL ]]; then
+    win32yank.exe -i <<< "$CUTBUFFER"
   fi
 
   BUFFER="${BUFFER:0:$bpos}${BUFFER:$epos}"
@@ -1271,6 +1290,10 @@ function zvm_vi_change_eol() {
 
   CUTBUFFER=${BUFFER:$bpos:$((epos-bpos))}
   BUFFER="${BUFFER:0:$bpos}${BUFFER:$epos}"
+
+  if [[ $WSL ]]; then
+    win32yank.exe -i <<< "$CUTBUFFER"
+  fi
 
   zvm_reset_repeat_commands $ZVM_MODE c 0 $#CUTBUFFER
   zvm_select_vi_mode $ZVM_MODE_INSERT
@@ -2136,6 +2159,11 @@ function zvm_change_surround_text_object() {
     ((epos++))
   fi
   CUTBUFFER=${BUFFER:$bpos:$(($epos-$bpos))}
+
+  if [[ $WSL ]]; then
+    win32yank.exe -i <<< "$CUTBUFFER"
+  fi
+
   case ${action:0:1} in
     c)
       BUFFER="${BUFFER:0:$bpos}${BUFFER:$epos}"
